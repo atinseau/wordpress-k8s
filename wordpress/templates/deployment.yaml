@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+        - name: wordpress-container
+          image: wordpress
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+              name: wordpress-port
+          env:
+            - name: WORDPRESS_HOST
+              value: {{ .Values.wordpress.host }}
+            - name: WORDPRESS_DB_HOST
+              value: mysql-service
+            - name: WORDPRESS_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-user
+            - name: WORDPRESS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-password
+            - name: WORDPRESS_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-db
+            - name: WORDPRESS_TITLE
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: title
+            - name: WORDPRESS_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: admin-user
+            - name: WORDPRESS_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: admin-password
+            - name: WORDPRESS_REDIS_HOST
+              value: redis-service
+            - name: WORDPRESS_VARNISH_HOST
+              value: varnish-service
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"

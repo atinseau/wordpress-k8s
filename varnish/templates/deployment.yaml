@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: varnish
+  labels:
+    app: varnish
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: varnish
+  template:
+    metadata:
+      labels:
+        app: varnish
+    spec:
+      containers:
+        - name: varnish
+          image: varnish
+          imagePullPolicy: Never
+          env:
+            - name: REMOTE_HOST
+              value: wordpress-service
+            - name: REMOTE_PORT
+              value: "8080"
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"

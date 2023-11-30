@@ -1,0 +1,6 @@
+
+wordpress:
+  admin_user: atinseau
+  admin_password: 06112001..Arttsn
+  title: mon-site-wordpress
+  host: my-wordpress.com

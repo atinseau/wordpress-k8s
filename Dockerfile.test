@@ -1,0 +1,10 @@
+FROM debian:buster-slim
+
+# RUN useradd --shell /bin/bash -g www-data www-data
+
+RUN adduser www-data sudo
+
+USER www-data
+WORKDIR /home/www-data
+
+CMD ["bash"]

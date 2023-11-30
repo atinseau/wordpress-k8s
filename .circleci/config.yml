@@ -24,8 +24,9 @@ jobs:
           command: |
             TAG=0.1.$CIRCLE_BUILD_NUM
             IMAGE_ID=$(docker images -q $GITHUB_USERNAME/wordpress:$TAG)
-            docker tag $IMAGE_ID ghcr.io/$GITHUB_USERNAME/wordpress:$TAG
-            docker push $GITHUB_USERNAME/wordpress:$TAG
+            echo $IMAGE_ID
+            # docker tag $IMAGE_ID ghcr.io/$GITHUB_USERNAME/wordpress:$TAG
+            # docker push $GITHUB_USERNAME/wordpress:$TAG
 workflows:
   pipeline:
     jobs:

@@ -3,9 +3,9 @@ jobs:
   build-docker-image:
     docker:
       - image: cimg/base:stable
-        # auth:
-        #   username: $DOCKERHUB_USERNAME
-        #   password: $DOCKERHUB_PASSWORD
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
       - setup_remote_docker:
@@ -23,7 +23,7 @@ jobs:
           name: Push Docker image
           command: |
             TAG=0.1.$CIRCLE_BUILD_NUM
-            docker push ghcr.io $GITHUB_USERNAME/wordpress:$TAG
+            docker push $GITHUB_USERNAME/wordpress:$TAG
 workflows:
   pipeline:
     jobs:

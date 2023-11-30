@@ -16,17 +16,13 @@ jobs:
             TAG=0.1.$CIRCLE_BUILD_NUM
             docker build -t $GITHUB_USERNAME/wordpress:$TAG wordpress/docker
       - run:
-          name: Login to GitHub Container Registry
-          command: |
-            echo $CR_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
-      - run:
           name: Push Docker image
           command: |
             TAG=0.1.$CIRCLE_BUILD_NUM
             IMAGE_ID=$(docker images -q $GITHUB_USERNAME/wordpress:$TAG)
-            echo $IMAGE_ID
-            # docker tag $IMAGE_ID ghcr.io/$GITHUB_USERNAME/wordpress:$TAG
-            # docker push $GITHUB_USERNAME/wordpress:$TAG
+            echo $CR_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
+            docker tag $IMAGE_ID ghcr.io/$GITHUB_USERNAME/wordpress:$TAG
+            docker push $GITHUB_USERNAME/wordpress:$TAG
 workflows:
   pipeline:
     jobs:

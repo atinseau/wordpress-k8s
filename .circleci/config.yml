@@ -3,9 +3,6 @@ jobs:
   build-docker-image:
     docker:
       - image: cimg/base:stable
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
       - setup_remote_docker:
@@ -15,12 +12,12 @@ jobs:
           command: |
             TAG=0.1.$CIRCLE_BUILD_NUM
             docker build -t $DOCKERHUB_USERNAME/circleci-docker-example:$TAG wordpress/docker
-      - run:
-          name: Push Docker image
-          command: |
-            TAG=0.1.$CIRCLE_BUILD_NUM
-            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-            docker push $DOCKERHUB_USERNAME/circleci-docker-example:$TAG
+      # - run:
+      #     name: Push Docker image
+      #     command: |
+      #       TAG=0.1.$CIRCLE_BUILD_NUM
+      #       echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+      #       docker push $DOCKERHUB_USERNAME/circleci-docker-example:$TAG
 workflows:
   pipeline:
     jobs:

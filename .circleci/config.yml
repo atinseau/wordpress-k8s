@@ -60,6 +60,7 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
+      - checkout
       - kubernetes/install-kubectl
       - kubernetes/install-kubeconfig:
           kubeconfig: KUBECONFIG_DATA

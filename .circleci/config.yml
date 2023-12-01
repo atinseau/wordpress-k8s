@@ -1,11 +1,10 @@
 version: 2.1
+orbs:
+  kubernetes: circleci/kubernetes@1.3.1
 jobs:
   build-docker-image:
     docker:
       - image: cimg/base:stable
-        auth: # For spin up a Docker daemon
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
       - setup_remote_docker:
@@ -22,7 +21,22 @@ jobs:
             echo $CR_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
             docker tag $IMAGE_ID $IMAGE_TAG
             docker push $IMAGE_TAG
+  deploy-k8s:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - kubernetes/install-kubectl
+      - kubernetes/install-kubeconfig:
+          kubeconfig: KUBECONFIG_DATA
+      - run:
+          name: Deploy To Kubernetes
+          command: |
+            kubectl get pods --all-namespaces
 workflows:
   pipeline:
     jobs:
       - build-docker-image
+      - deploy-k8s:
+          requires:
+            - build-docker-image
+

@@ -15,9 +15,10 @@ jobs:
           name: Push Docker image
           command: |
             IMAGE_ID=$(docker images -q $GITHUB_USERNAME/wordpress:$CIRCLE_BRANCH)
+            IMAGE_TAG=ghcr.io/$GITHUB_USERNAME/wordpress:$CIRCLE_BRANCH
             echo $CR_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
-            docker tag $IMAGE_ID ghcr.io/$GITHUB_USERNAME/wordpress:$CIRCLE_BRANCH
-            docker push ghcr.io/$GITHUB_USERNAME/wordpress:$CIRCLE_BRANCH
+            docker tag $IMAGE_ID $IMAGE_TAG
+            docker push $IMAGE_TAG
 workflows:
   pipeline:
     jobs:

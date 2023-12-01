@@ -6,6 +6,8 @@ jobs:
     environment:
       IMAGE_NAME: $GITHUB_USERNAME/wordpress:{{ .Branch }}
     steps:
+      - run:
+          command: echo $IMAGE_NAME
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true

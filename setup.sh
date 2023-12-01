@@ -15,6 +15,7 @@ function create_docker_cred() {
 
 create_docker_cred "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"
 
+echo "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" | docker login ghcr.io -u atinseau --password-stdin
 
 exit 0
 # echo -n "atinseau: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" | base64

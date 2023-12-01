@@ -64,6 +64,10 @@ jobs:
           kubeconfig: KUBECONFIG_DATA
       - helm/install_helm_client
       - run:
+          name: Fix Kubeconfig
+          command: |
+            chmod go-r ~/.kube/config
+      - run:
           name: Deploy To Kubernetes
           command: |
             kubectl get pods --all-namespaces

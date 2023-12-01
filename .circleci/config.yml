@@ -74,9 +74,9 @@ jobs:
 workflows:
   pipeline:
     jobs:
-      - build-wordpress-image
-      - build-varnish-image
-      - deploy-k8s:
-          requires:
-            - build-wordpress-image
-            - build-varnish-image
+      # - build-wordpress-image
+      # - build-varnish-image
+      - deploy-k8s
+          # requires:
+            # - build-wordpress-image
+            # - build-varnish-image

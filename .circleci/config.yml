@@ -1,26 +1,61 @@
 version: 2.1
 orbs:
   kubernetes: circleci/kubernetes@1.3.1
-jobs:
-  build-docker-image:
-    docker:
-      - image: cimg/base:stable
+  helm: circleci/helm@3.0.0
+
+commands:
+  setup-docker:
     steps:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
+  build-image:
+    parameters:
+      image-name:
+        type: string
+      image-path:
+        type: string
+    steps:
       - run:
           name: Build Docker image
           command: |
-            docker build -t $GITHUB_USERNAME/wordpress:$CIRCLE_BRANCH wordpress/docker
+            docker build -t $GITHUB_USERNAME/<<parameters.image-name>>:$CIRCLE_BRANCH <<parameters.image-path>>
+  push-image:
+    parameters:
+      image-name:
+        type: string
+    steps:
       - run:
           name: Push Docker image
           command: |
-            IMAGE_ID=$(docker images -q $GITHUB_USERNAME/wordpress:$CIRCLE_BRANCH)
-            IMAGE_TAG=ghcr.io/$GITHUB_USERNAME/wordpress:$CIRCLE_BRANCH
+            IMAGE_ID=$(docker images -q $GITHUB_USERNAME/<<parameters.image-name>>:$CIRCLE_BRANCH)
+            IMAGE_TAG=ghcr.io/$GITHUB_USERNAME/<<parameters.image-name>>:$CIRCLE_BRANCH
             echo $CR_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
             docker tag $IMAGE_ID $IMAGE_TAG
             docker push $IMAGE_TAG
+
+jobs:
+  build-wordpress-image:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - setup-docker
+      - build-image:
+          image-name: wordpress
+          image-path: wordpress/docker
+      - push-image:
+          image-name: wordpress
+            
+  build-varnish-image:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - setup-docker
+      - build-image:
+          image-name: varnish
+          image-path: varnish/docker
+      - push-image:
+          image-name: varnish
   deploy-k8s:
     docker:
       - image: cimg/base:stable
@@ -35,9 +70,9 @@ jobs:
 workflows:
   pipeline:
     jobs:
-      # - build-docker-image
-      # - deploy-k8s:
-      #     requires:
-      #       - build-docker-image
-      - deploy-k8s
-
+      - build-wordpress-image
+      - build-varnish-image
+      - deploy-k8s:
+          requires:
+            - build-wordpress-image
+            - build-varnish-image

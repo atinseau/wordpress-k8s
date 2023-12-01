@@ -14,10 +14,14 @@ spec:
       labels:
         app: varnish
     spec:
+      {{- if hasKey .Values.wordpress.image "pullSecrets" }}
+      imagePullSecrets:
+        - name: {{ .Values.wordpress.image.pullSecrets.name }}
+      {{- end }}
       containers:
         - name: varnish
-          image: varnish
-          imagePullPolicy: Never
+          image: {{ .Values.varnish.image.name }}
+          imagePullPolicy: {{ .Values.varnish.image.pullPolicy }}
           env:
             - name: REMOTE_HOST
               value: wordpress-service

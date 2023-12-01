@@ -14,10 +14,14 @@ spec:
       labels:
         app: wordpress
     spec:
+      {{- if hasKey .Values.wordpress.image "pullSecrets" }}
+      imagePullSecrets:
+        - name: {{ .Values.wordpress.image.pullSecrets.name }}
+      {{- end }}
       containers:
         - name: wordpress-container
-          image: wordpress
-          imagePullPolicy: Never
+          image: {{ .Values.wordpress.image.name }}
+          imagePullPolicy: {{ .Values.wordpress.image.pullPolicy }}
           ports:
             - containerPort: 80
               name: wordpress-port

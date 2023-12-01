@@ -2,8 +2,22 @@ eval $(minikube docker-env)
 
 # helm uninstall mysql-release wordpress-release redis-release varnish-release
 
-docker build -t wordpress wordpress/docker
-docker build -t varnish varnish/docker
+# kubectl create secret docker-registry regcred \
+#   --docker-server=https://ghcr.io \
+#   --docker-username=atinseau \
+#   --docker-password=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 \
+#   --docker-email=arthurtinseau@live.fr
+
+# echo -n "atinseau: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" | base64
+
+# YXRpbnNlYXU6Z2hwX2d4dmQyamFqU1cwZDJUZDdNQW4ySzZqSmtpY2RZQTJaRERtQg==
+
+# {"auths":{"ghcr.io":{"auth":"YXRpbnNlYXU6Z2hwX2d4dmQyamFqU1cwZDJUZDdNQW4ySzZqSmtpY2RZQTJaRERtQg=="}}}
+# docker build -t wordpress wordpress/docker
+
+
+
+# docker build -t varnish varnish/docker
 
 # MYSQL DEPLOYMENT
 MYSQL_RELEASE_NAME=mysql-release
@@ -14,16 +28,6 @@ if [[ "$MYSQL_RELEASE_DIFF" > 0 ]]; then
   helm upgrade --install $MYSQL_RELEASE_NAME mysql/ -f values.yaml
 else
   echo "mysql-release has not changed. Skipping..."
-fi
-
-VARNISH_RELEASE_NAME=varnish-release
-VARNISH_RELEASE_DIFF=$(helm diff upgrade $VARNISH_RELEASE_NAME varnish/  -f values.yaml | wc -l)
-
-if [[ "$VARNISH_RELEASE_DIFF" > 0 ]]; then
-  echo "varnish-release has changed. Updating..."
-  helm upgrade --install $VARNISH_RELEASE_NAME varnish/ -f values.yaml
-else
-  echo "varnish-release has not changed. Skipping..."
 fi
 
 # REDIS DEPLOYMENT
@@ -46,4 +50,14 @@ if [[ "$WORDPRESS_RELEASE_DIFF" > 0 ]]; then
   helm upgrade --install wordpress-release wordpress/ -f values.yaml
 else
   echo "wordpress-release has not changed. Skipping..."
+fi
+
+VARNISH_RELEASE_NAME=varnish-release
+VARNISH_RELEASE_DIFF=$(helm diff upgrade $VARNISH_RELEASE_NAME varnish/  -f values.yaml | wc -l)
+
+if [[ "$VARNISH_RELEASE_DIFF" > 0 ]]; then
+  echo "varnish-release has changed. Updating..."
+  helm upgrade --install $VARNISH_RELEASE_NAME varnish/ -f values.yaml
+else
+  echo "varnish-release has not changed. Skipping..."
 fi

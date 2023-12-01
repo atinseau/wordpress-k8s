@@ -35,26 +35,26 @@ commands:
             docker push $IMAGE_TAG
 
 jobs:
-  # build-wordpress-image:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - setup-docker
-  #     - build-image:
-  #         image-name: wordpress
-  #         image-path: wordpress/docker
-  #     - push-image:
-  #         image-name: wordpress
-  # build-varnish-image:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - setup-docker
-  #     - build-image:
-  #         image-name: varnish
-  #         image-path: varnish/docker
-  #     - push-image:
-  #         image-name: varnish
+  build-wordpress-image:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - setup-docker
+      - build-image:
+          image-name: wordpress
+          image-path: wordpress/docker
+      - push-image:
+          image-name: wordpress
+  build-varnish-image:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - setup-docker
+      - build-image:
+          image-name: varnish
+          image-path: varnish/docker
+      - push-image:
+          image-name: varnish
   deploy-k8s:
     docker:
       - image: cimg/base:stable
@@ -68,19 +68,18 @@ jobs:
           command: |
             chmod go-r ~/.kube/config
       - run:
-          name: Deploy To Kubernetes
-          command: |
-            kubectl get pods --all-namespaces
-      - run:
           name: Helm Install
           command: |
-            helm list
+            helm upgrade --install mysql-release mysql/ -f values.yaml
+            helm upgrade --install redis-release redis/ -f values.yaml
+            helm upgrade --install wordpress-release wordpress/ -f values.yaml
+            helm upgrade --install varnish-release varnish/ -f values.yaml
 workflows:
   pipeline:
     jobs:
-      # - build-wordpress-image
-      # - build-varnish-image
-      - deploy-k8s
-          # requires:
-            # - build-wordpress-image
-            # - build-varnish-image
+      - build-wordpress-image
+      - build-varnish-image
+      - deploy-k8s:
+          requires:
+            - build-wordpress-image
+            - build-varnish-image

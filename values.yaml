@@ -4,3 +4,15 @@ wordpress:
   admin_password: 06112001..Arttsn
   title: mon-site-wordpress
   host: my-wordpress.com
+  image:
+    name: ghcr.io/atinseau/wordpress:master
+    pullPolicy: Always
+    pullSecrets:
+      name: regcred
+
+varnish:
+  image:
+    name: ghcr.io/atinseau/varnish:master
+    pullPolicy: Always
+    pullSecrets:
+      name: regcred

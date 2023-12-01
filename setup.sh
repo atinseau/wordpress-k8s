@@ -8,11 +8,20 @@ eval $(minikube docker-env)
 #   --docker-password=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 \
 #   --docker-email=arthurtinseau@live.fr
 
+function create_docker_cred() {
+  local username=$(echo -n "atinseau:$1" | base64)
+  echo -n "{\"auths\":{\"ghcr.io\":{\"auth\":\"${username}\"}}}\"" | base64
+}
+
+create_docker_cred "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"
+
+
+exit 0
 # echo -n "atinseau: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" | base64
 
 # YXRpbnNlYXU6Z2hwX2d4dmQyamFqU1cwZDJUZDdNQW4ySzZqSmtpY2RZQTJaRERtQg==
 
-# {"auths":{"ghcr.io":{"auth":"YXRpbnNlYXU6Z2hwX2d4dmQyamFqU1cwZDJUZDdNQW4ySzZqSmtpY2RZQTJaRERtQg=="}}}
+# 
 # docker build -t wordpress wordpress/docker
 
 

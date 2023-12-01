@@ -69,7 +69,7 @@ jobs:
           name: Fix Kubeconfig
           command: |
             chmod go-r ~/.kube/config
-            kubectl create secret docker-registry regcred --docker-server=https://ghcr.io --docker-username=atinseau --docker-password=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 --docker-email=arthurtinseau@live.fr
+            kubectl create secret docker-registry regcred --docker-server=https://ghcr.io --docker-username=atinseau --docker-password=$CR_PAT --docker-email=arthurtinseau@live.fr
       - run:
           name: Helm Install
           command: |

@@ -25,6 +25,10 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
+      - run:
+          name: test
+          command: |
+            echo -n $KUBECONFIG_DATA | base64 --decode
       - kubernetes/install-kubectl
       - kubernetes/install-kubeconfig:
           kubeconfig: KUBECONFIG_DATA
@@ -35,8 +39,9 @@ jobs:
 workflows:
   pipeline:
     jobs:
-      - build-docker-image
-      - deploy-k8s:
-          requires:
-            - build-docker-image
+      # - build-docker-image
+      # - deploy-k8s:
+      #     requires:
+      #       - build-docker-image
+      - deploy-k8s
 

@@ -3,6 +3,8 @@ jobs:
   build-docker-image:
     docker:
       - image: cimg/base:stable
+    environment:
+      IMAGE_NAME: $GITHUB_USERNAME/wordpress:{{ .Branch }}
     steps:
       - checkout
       - setup_remote_docker:
@@ -10,16 +12,14 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            TAG=0.1.$CIRCLE_BUILD_NUM
-            docker build -t $GITHUB_USERNAME/wordpress:$TAG wordpress/docker
+            docker build -t $IMAGE_NAME wordpress/docker
       - run:
           name: Push Docker image
           command: |
-            TAG=0.1.$CIRCLE_BUILD_NUM
-            IMAGE_ID=$(docker images -q $GITHUB_USERNAME/wordpress:$TAG)
+            IMAGE_ID=$(docker images -q $IMAGE_NAME)
             echo $CR_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
-            docker tag $IMAGE_ID ghcr.io/$GITHUB_USERNAME/wordpress:$TAG
-            docker push ghcr.io/$GITHUB_USERNAME/wordpress:$TAG
+            docker tag $IMAGE_ID ghcr.io/$IMAGE_NAME
+            docker push ghcr.io/$IMAGE_NAME
 workflows:
   pipeline:
     jobs:

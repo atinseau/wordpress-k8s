@@ -35,26 +35,26 @@ commands:
             docker push $IMAGE_TAG
 
 jobs:
-  build-wordpress-image:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - setup-docker
-      - build-image:
-          image-name: wordpress
-          image-path: wordpress/docker
-      - push-image:
-          image-name: wordpress
-  build-varnish-image:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - setup-docker
-      - build-image:
-          image-name: varnish
-          image-path: varnish/docker
-      - push-image:
-          image-name: varnish
+  # build-wordpress-image:
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - setup-docker
+  #     - build-image:
+  #         image-name: wordpress
+  #         image-path: wordpress/docker
+  #     - push-image:
+  #         image-name: wordpress
+  # build-varnish-image:
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - setup-docker
+  #     - build-image:
+  #         image-name: varnish
+  #         image-path: varnish/docker
+  #     - push-image:
+  #         image-name: varnish
   deploy-k8s:
     docker:
       - image: cimg/base:stable
@@ -62,6 +62,7 @@ jobs:
       - kubernetes/install-kubectl
       - kubernetes/install-kubeconfig:
           kubeconfig: KUBECONFIG_DATA
+      - install_helm_client
       - run:
           name: Deploy To Kubernetes
           command: |

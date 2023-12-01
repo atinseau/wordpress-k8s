@@ -62,7 +62,7 @@ jobs:
       - kubernetes/install-kubectl
       - kubernetes/install-kubeconfig:
           kubeconfig: KUBECONFIG_DATA
-      - install_helm_client
+      - helm/install_helm_client
       - run:
           name: Deploy To Kubernetes
           command: |

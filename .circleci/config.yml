@@ -4,20 +4,24 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
-          name: Build Docker image
           command: |
-            docker build -t $GITHUB_USERNAME/wordpress:{{ .Branch }} wordpress/docker
-      - run:
-          name: Push Docker image
-          command: |
-            IMAGE_ID=$(docker images -q $GITHUB_USERNAME/wordpress:{{ .Branch }})
-            echo $CR_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
-            docker tag $IMAGE_ID ghcr.io/$GITHUB_USERNAME/wordpress:{{ .Branch }}
-            docker push ghcr.io/$GITHUB_USERNAME/wordpress:{{ .Branch }}
+            echo $CIRCLECI_BRANCH
+            env
+      # - checkout
+      # - setup_remote_docker:
+      #     docker_layer_caching: true
+      # - run:
+      #     name: Build Docker image
+      #     command: |
+      #       docker build -t $GITHUB_USERNAME/wordpress:{{ .Branch }} wordpress/docker
+      # - run:
+      #     name: Push Docker image
+      #     command: |
+      #       IMAGE_ID=$(docker images -q $GITHUB_USERNAME/wordpress:{{ .Branch }})
+      #       echo $CR_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
+      #       docker tag $IMAGE_ID ghcr.io/$GITHUB_USERNAME/wordpress:{{ .Branch }}
+      #       docker push ghcr.io/$GITHUB_USERNAME/wordpress:{{ .Branch }}
 workflows:
   pipeline:
     jobs:

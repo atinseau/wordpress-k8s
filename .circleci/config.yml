@@ -45,7 +45,6 @@ jobs:
           image-path: wordpress/docker
       - push-image:
           image-name: wordpress
-            
   build-varnish-image:
     docker:
       - image: cimg/base:stable
@@ -67,6 +66,10 @@ jobs:
           name: Deploy To Kubernetes
           command: |
             kubectl get pods --all-namespaces
+      - run:
+          name: Helm Install
+          command: |
+            helm list
 workflows:
   pipeline:
     jobs:
